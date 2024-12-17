@@ -190,6 +190,11 @@ bool LiveRangeCalc::isDefOnEntry(LiveRange &LR, ArrayRef<SlotIndex> Undefs,
 bool LiveRangeCalc::findReachingDefs(LiveRange &LR, MachineBasicBlock &UseMBB,
                                      SlotIndex Use, unsigned PhysReg,
                                      ArrayRef<SlotIndex> Undefs) {
+  // PhysReg is defined at current instruction.
+  if (Indexes->getInstructionFromIndex(Use)
+      ->modifiesRegister(PhysReg, MRI->getTargetRegisterInfo()))
+    return true;
+
   unsigned UseMBBNum = UseMBB.getNumber();
 
   // Block numbers where LR should be live-in.

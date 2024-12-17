@@ -793,7 +793,9 @@ void RegPressureTracker::recede(const RegisterOperands &RegOpers,
   // Generate liveness for uses.
   for (const RegisterMaskPair &Use : RegOpers.Uses) {
     Register Reg = Use.RegUnit;
-    assert(Use.LaneMask.any());
+    if (!Use.LaneMask.any())
+      continue; 
+
     LaneBitmask PreviousMask = LiveRegs.insert(Use);
     LaneBitmask NewMask = PreviousMask | Use.LaneMask;
     if (NewMask == PreviousMask)
